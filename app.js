@@ -37,28 +37,54 @@ document.addEventListener('DOMContentLoaded', function() {
         // 更新可用检测器列表
         const availableDetectors = detectorSelector.getAvailableDetectors();
         
-        // 禁用不可用的检测器选项
-        Array.from(detectorSelect.options).forEach(option => {
-            if (!availableDetectors.includes(option.value)) {
-                option.disabled = true;
-                option.text += ' (不可用)';
-            }
-        });
+        // 检查是否为移动设备
+        const isMobile = window.innerWidth <= 768;
         
-        // 设置默认检测器
-        if (availableDetectors.length > 0) {
-            detectorSelect.value = availableDetectors[0];
-            detectorSelector.setDetector(availableDetectors[0]);
-            updateDetectorDescription(availableDetectors[0]);
+        // 在移动设备上默认使用原始检测器
+        if (isMobile) {
+            if (availableDetectors.includes('original')) {
+                detectorSelector.setDetector('original');
+            } else if (availableDetectors.length > 0) {
+                detectorSelector.setDetector(availableDetectors[0]);
+            }
+        } else if (detectorSelect) {
+            // 在桌面设备上允许选择检测器
+            // 禁用不可用的检测器选项
+            Array.from(detectorSelect.options).forEach(option => {
+                if (!availableDetectors.includes(option.value)) {
+                    option.disabled = true;
+                    option.text += ' (不可用)';
+                }
+            });
+            
+            // 设置默认检测器
+            if (availableDetectors.length > 0) {
+                detectorSelect.value = availableDetectors[0];
+                detectorSelector.setDetector(availableDetectors[0]);
+                updateDetectorDescription(availableDetectors[0]);
+            }
+        }
+    });
+    
+    // 监听窗口大小变化，在移动设备和桌面设备之间切换时调整
+    window.addEventListener('resize', function() {
+        const isMobile = window.innerWidth <= 768;
+        const availableDetectors = detectorSelector.getAvailableDetectors();
+        
+        // 在移动设备上自动切换到原始检测器
+        if (isMobile && availableDetectors.includes('original')) {
+            detectorSelector.setDetector('original');
         }
     });
     
     // 检测器选择变化事件
-    detectorSelect.addEventListener('change', function() {
-        const selectedDetector = detectorSelect.value;
-        detectorSelector.setDetector(selectedDetector);
-        updateDetectorDescription(selectedDetector);
-    });
+    if (detectorSelect) {
+        detectorSelect.addEventListener('change', function() {
+            const selectedDetector = detectorSelect.value;
+            detectorSelector.setDetector(selectedDetector);
+            updateDetectorDescription(selectedDetector);
+        });
+    }
     
     // 更新检测器描述
     function updateDetectorDescription(detectorName) {

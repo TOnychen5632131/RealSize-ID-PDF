@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Online ID Card Scanner</title>
     <style>
         :root {
@@ -319,10 +319,57 @@
             margin-top: 8px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+            
             .upload-box {
                 width: 100%;
                 margin-bottom: 20px;
+                height: 180px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .notion-header-emoji {
+                font-size: 56px;
+                margin-bottom: 16px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+            
+            button {
+                width: 100%;
+                height: 44px;
+                justify-content: center;
+            }
+            
+            .edit-btn {
+                bottom: 8px;
+                right: 8px;
+                padding: 8px 12px;
+                height: 40px;
+            }
+            
+            .corner-handle {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .preview-container {
+                padding: 16px;
+                min-height: 300px;
+            }
+            
+            #pdf-preview {
+                height: 300px;
             }
         }
     </style>
@@ -401,20 +448,7 @@
             </div>
         </div>
 
-        <div class="detector-selector">
-            <p style="margin-bottom: 8px; color: rgba(55, 53, 47, 0.65);">选择身份证检测算法：</p>
-            <div class="detector-options">
-                <select id="detector-select" class="detector-select">
-                    <option value="original">原始 OpenCV</option>
-                    <option value="smartcrop">SmartCrop 智能裁剪</option>
-                    <option value="tensorflow">TensorFlow 深度学习</option>
-                    <option value="hed">HED 边缘检测</option>
-                </select>
-                <div class="detector-info">
-                    <p id="detector-description" style="font-size: 13px; color: rgba(55, 53, 47, 0.65); margin-top: 4px;">原始 OpenCV 检测器：基于传统计算机视觉方法，适用于清晰、对比度高的图像。</p>
-                </div>
-            </div>
-        </div>
+        <!-- 移动端不显示检测算法选择器 -->
 
         <div class="buttons">
             <button id="generate-btn" disabled>

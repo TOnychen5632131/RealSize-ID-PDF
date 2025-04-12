@@ -237,6 +237,13 @@ class ManualIDCardEditor {
                 box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px;
             }
             
+            @media (max-width: 768px) {
+                .editor-area {
+                    width: 95%;
+                    height: 60%;
+                }
+            }
+            
             .image-container {
                 position: relative;
                 width: 100%;
@@ -258,8 +265,8 @@ class ManualIDCardEditor {
             
             .corner-handle {
                 position: absolute;
-                width: 20px;
-                height: 20px;
+                width: 24px;
+                height: 24px;
                 background-color: rgba(35, 130, 226, 0.9);
                 border: 2px solid white;
                 border-radius: 50%;
@@ -272,6 +279,14 @@ class ManualIDCardEditor {
             
             .corner-handle:hover {
                 transform: scale(1.2);
+            }
+            
+            @media (max-width: 768px) {
+                .corner-handle {
+                    width: 32px;
+                    height: 32px;
+                    border-width: 3px;
+                }
             }
             
             .corner-handle[data-corner="0"] {
@@ -296,6 +311,19 @@ class ManualIDCardEditor {
                 gap: 10px;
                 flex-wrap: wrap;
                 justify-content: center;
+            }
+            
+            @media (max-width: 768px) {
+                .editor-controls {
+                    flex-direction: column;
+                    width: 90%;
+                }
+                
+                .editor-controls button {
+                    width: 100%;
+                    height: 44px;
+                    justify-content: center;
+                }
             }
             
             .editor-controls button {
