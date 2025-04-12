@@ -82,6 +82,13 @@ class ManualIDCardEditor {
             this.currentSide = side;
             this.originalImageData = imageUrl;
             
+            // 重置角点位置数组，确保每次打开编辑器时都是空的
+            this.cornerPositions = [];
+            this.isCornerMode = false;
+            
+            // 清空角点控制手柄数组
+            this.cornerHandles = [];
+            
             // 创建编辑器 UI
             this.createEditorUI(onSave);
             
@@ -132,15 +139,6 @@ class ManualIDCardEditor {
         const controlsContainer = document.createElement('div');
         controlsContainer.className = 'editor-controls';
         
-        // 缩放按钮
-        const zoomInBtn = document.createElement('button');
-        zoomInBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M15 3v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9 21v-4H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3 9h4V5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M21 15h-4v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> 放大';
-        zoomInBtn.addEventListener('click', () => this.zoom(1.1));
-        
-        const zoomOutBtn = document.createElement('button');
-        zoomOutBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M15 3v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M9 21v-4H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3 9h4V5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M21 15h-4v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> 缩小';
-        zoomOutBtn.addEventListener('click', () => this.zoom(0.9));
-        
         // 旋转按钮
         const rotateLeftBtn = document.createElement('button');
         rotateLeftBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 3v5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> 向左旋转';
@@ -175,8 +173,6 @@ class ManualIDCardEditor {
         cancelBtn.addEventListener('click', () => this.closeEditor());
         
         // 添加按钮到控制容器
-        controlsContainer.appendChild(zoomInBtn);
-        controlsContainer.appendChild(zoomOutBtn);
         controlsContainer.appendChild(rotateLeftBtn);
         controlsContainer.appendChild(rotateRightBtn);
         controlsContainer.appendChild(cornerModeBtn);
@@ -407,10 +403,26 @@ class ManualIDCardEditor {
             handle.style.display = this.isCornerMode ? 'block' : 'none';
         });
         
-        // 在切换模式时更新角点位置
+        // 移除现有的透视叠加层
+        const existingOverlay = document.querySelector('.perspective-overlay');
+        if (existingOverlay && existingOverlay.parentNode) {
+            existingOverlay.parentNode.removeChild(existingOverlay);
+        }
+        
+        // 在切换模式时强制重新初始化角点位置
         if (this.isCornerMode) {
-            this.initializeCornerPositions();
-            this.initializeCornerDragging();
+            // 清空角点位置数组，确保重新初始化
+            this.cornerPositions = [];
+            
+            // 确保图像已完全加载并且 DOM 已更新
+            setTimeout(() => {
+                this.initializeCornerPositions();
+                this.initializeCornerDragging();
+                this.updateCornerHandles();
+                
+                // 应用透视变换以显示选择区域
+                this.applyPerspectiveTransform();
+            }, 50);
         }
     }
     
@@ -630,6 +642,13 @@ class ManualIDCardEditor {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         
+        // 保存当前状态，用于处理完成后重置
+        const currentState = {
+            isCornerMode: this.isCornerMode,
+            cornerPositions: [...this.cornerPositions],
+            transform: this.parseTransform(this.imageElement.style.transform)
+        };
+        
         if (this.isCornerMode && this.cornerPositions.length === 4) {
             // 在四角调整模式下应用透视变换
             
@@ -688,6 +707,10 @@ class ManualIDCardEditor {
             // 获取图像变换信息
             const transform = this.parseTransform(this.imageElement.style.transform);
             
+            // 设置 Canvas 尺寸为图像的实际尺寸
+            canvas.width = this.imageElement.naturalWidth;
+            canvas.height = this.imageElement.naturalHeight;
+            
             // 应用变换
             ctx.translate(canvas.width / 2, canvas.height / 2);
             ctx.rotate(transform.rotate * Math.PI / 180);
@@ -701,8 +724,63 @@ class ManualIDCardEditor {
             ctx.drawImage(this.imageElement, 0, 0, canvas.width, canvas.height);
         }
         
+        // 应用圆角效果到处理后的图像
+        this.applyRoundedCorners(canvas, ctx);
+        
+        // 处理完成后，重置编辑器状态，为下次编辑做准备
+        // 这样可以确保下次打开四角调整模式时能正确初始化
+        this.isCornerMode = false;
+        this.cornerPositions = [];
+        
+        // 隐藏所有角点控制手柄
+        this.cornerHandles.forEach(handle => {
+            handle.style.display = 'none';
+        });
+        
+        // 移除透视叠加层
+        const overlay = document.querySelector('.perspective-overlay');
+        if (overlay && overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+        }
+        
         // 返回处理后的图像 URL
         return canvas.toDataURL('image/jpeg', 0.9);
+    }
+    
+    /**
+     * 应用圆角效果到图像
+     * @param {HTMLCanvasElement} canvas - Canvas 元素
+     * @param {CanvasRenderingContext2D} ctx - Canvas 上下文
+     */
+    applyRoundedCorners(canvas, ctx) {
+        const radius = Math.min(canvas.width, canvas.height) * 0.05; // 圆角半径为宽高的 5%
+        const width = canvas.width;
+        const height = canvas.height;
+        
+        // 保存当前图像数据
+        const imageData = ctx.getImageData(0, 0, width, height);
+        
+        // 清除 Canvas
+        ctx.clearRect(0, 0, width, height);
+        
+        // 绘制圆角矩形路径
+        ctx.beginPath();
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(width - radius, 0);
+        ctx.quadraticCurveTo(width, 0, width, radius);
+        ctx.lineTo(width, height - radius);
+        ctx.quadraticCurveTo(width, height, width - radius, height);
+        ctx.lineTo(radius, height);
+        ctx.quadraticCurveTo(0, height, 0, height - radius);
+        ctx.lineTo(0, radius);
+        ctx.quadraticCurveTo(0, 0, radius, 0);
+        ctx.closePath();
+        
+        // 创建裁剪区域
+        ctx.clip();
+        
+        // 将原始图像数据放回 Canvas
+        ctx.putImageData(imageData, 0, 0);
     }
 
     /**
@@ -944,6 +1022,19 @@ class ManualIDCardEditor {
     closeEditor() {
         if (this.editorContainer && this.editorContainer.parentNode) {
             this.editorContainer.parentNode.removeChild(this.editorContainer);
+        }
+        
+        // 清除引用和状态
+        this.editorContainer = null;
+        this.imageElement = null;
+        this.cornerHandles = [];
+        this.cornerPositions = [];
+        this.isCornerMode = false;
+        
+        // 移除透视叠加层
+        const overlay = document.querySelector('.perspective-overlay');
+        if (overlay && overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
         }
     }
 }
