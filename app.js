@@ -128,8 +128,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle image upload
     function handleImageUpload(event, previewElement, side) {
         const file = event.target.files[0];
-        if (file && file.type.match('image.*')) {
-            const reader = new FileReader();
+        // 支持的图像格式列表
+        const supportedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'image/heic'];
+        
+        // 检查文件类型是否支持
+        if (file) {
+            const fileType = file.type.toLowerCase();
+            // 特殊处理HEIC格式（某些浏览器可能将其识别为空或其他MIME类型）
+            const isHeic = fileType === 'image/heic' || fileType === 'image/heif' || 
+                          (file.name && file.name.toLowerCase().endsWith('.heic'));
+            
+            if (supportedFormats.includes(fileType) || isHeic) {
+                const reader = new FileReader();
             
             reader.onload = async function(e) {
                 const originalImage = e.target.result;
@@ -174,7 +184,11 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             reader.readAsDataURL(file);
+        } else {
+            // 显示不支持的格式提示
+            alert('不支持的图像格式。支持的格式包括：JPG、PNG、GIF、BMP、WebP和HEIC。');
         }
+    }
     }
 
     // Setup drag and drop functionality
@@ -218,8 +232,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const dt = e.dataTransfer;
             const file = dt.files[0];
             
-            if (file && file.type.match('image.*')) {
-                const reader = new FileReader();
+            // 支持的图像格式列表
+            const supportedFormats = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'image/heic'];
+            
+            // 检查文件类型是否支持
+            if (file) {
+                const fileType = file.type.toLowerCase();
+                // 特殊处理 HEIC 格式（某些浏览器可能将其识别为空或其他 MIME 类型）
+                const isHeic = fileType === 'image/heic' || fileType === 'image/heif' || 
+                              (file.name && file.name.toLowerCase().endsWith('.heic'));
+                
+                if (supportedFormats.includes(fileType) || isHeic) {
+                    const reader = new FileReader();
                 
                 reader.onload = async function(e) {
                     const originalImage = e.target.result;
@@ -264,6 +288,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
                 
                 reader.readAsDataURL(file);
+                } else {
+                    // 显示不支持的格式提示
+                    alert('不支持的图像格式。支持的格式包括：JPG、PNG、GIF、BMP、WebP 和 HEIC。');
+                }
             }
         }
     }
@@ -442,7 +470,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const offsetX = (ID_CARD_WIDTH - width) / 2;
         const offsetY = (ID_CARD_HEIGHT - height) / 2;
         
-        // Add image to PDF
+        // Define rounded corner radius (3mm is standard for ID cards)
+        const cornerRadius = 3;
+        
+        // Draw rounded rectangle for ID card background
+        doc.setFillColor(255, 255, 255);
+        doc.setDrawColor(233, 233, 231); // Notion border color
+        doc.setLineWidth(0.2);
+        
+        // Draw rounded rectangle path
+        const rx = x;
+        const ry = y;
+        const rw = ID_CARD_WIDTH;
+        const rh = ID_CARD_HEIGHT;
+        
+        // Draw rounded rectangle using bezier curves
+        doc.roundedRect(rx, ry, rw, rh, cornerRadius, cornerRadius, 'FD');
+        
+        // Create clipping path for the image (to ensure image respects rounded corners)
+        doc.saveGraphicsState();
+        doc.roundedRect(rx, ry, rw, rh, cornerRadius, cornerRadius, 'S');
+        doc.clip();
+        
+        // Add image to PDF within the clipping path
         doc.addImage(
             img, 
             'JPEG', 
@@ -452,10 +502,8 @@ document.addEventListener('DOMContentLoaded', function() {
             height
         );
         
-        // Draw a border around the ID card area with Notion-style
-        doc.setDrawColor(233, 233, 231); // Notion border color
-        doc.setLineWidth(0.2);
-        doc.rect(x, y, ID_CARD_WIDTH, ID_CARD_HEIGHT);
+        // Restore graphics state to remove clipping path
+        doc.restoreGraphicsState();
         
         // Add a subtle Notion-style watermark
         doc.setFontSize(8);

@@ -14,6 +14,8 @@ class ManualIDCardEditor {
         this.cornerHandles = [];
         this.isCornerMode = false;
         this.cornerPositions = [];
+        this.magnifier = null;
+        this.magnifierInner = null;
         this.loadInteractJs();
     }
 
@@ -450,7 +452,34 @@ class ManualIDCardEditor {
                 
                 // 应用透视变换以显示选择区域
                 this.applyPerspectiveTransform();
+                
+                // 在移动端显示提示信息
+                if (window.innerWidth <= 768) {
+                    const helpText = document.querySelector('.editor-help-text');
+                    if (helpText) {
+                        helpText.textContent = '提示：拖动四个角点调整图像，放大镜将帮助您精确定位';
+                    }
+                    
+                    // 禁用图像拖动，防止在调整角点时移动图像
+                    if (window.interact && this.imageElement) {
+                        interact(this.imageElement).draggable(false);
+                    }
+                }
             }, 50);
+        } else {
+            // 退出角点模式时，恢复图像拖动功能
+            if (window.innerWidth <= 768 && window.interact && this.imageElement) {
+                this.initializeInteractions();
+            }
+            
+            // 隐藏放大镜
+            this.hideMagnifier();
+            
+            // 恢复提示文本
+            const helpText = document.querySelector('.editor-help-text');
+            if (helpText) {
+                helpText.textContent = '提示：拖动图像调整位置，使用按钮缩放和旋转，或使用四角调整功能精确调整';
+            }
         }
     }
     
@@ -476,6 +505,9 @@ class ManualIDCardEditor {
             return;
         }
         
+        // 创建放大镜元素（如果不存在）
+        this.createMagnifier();
+        
         // 为每个角点添加拖拽功能
         this.cornerHandles.forEach((handle, index) => {
             interact(handle).draggable({
@@ -497,9 +529,40 @@ class ManualIDCardEditor {
                         
                         // 应用透视变换
                         this.applyPerspectiveTransform();
+                        
+                        // 更新放大镜位置和内容
+                        this.updateMagnifier(this.cornerPositions[index].x, this.cornerPositions[index].y);
                     }
                 }
             });
+            
+            // 添加触摸事件监听器
+            handle.addEventListener('touchstart', (e) => {
+                // 阻止触摸事件传播到图像元素，防止图像移动
+                e.stopPropagation();
+                
+                // 显示放大镜
+                const touch = e.touches[0];
+                const rect = handle.getBoundingClientRect();
+                const x = rect.left + rect.width / 2;
+                const y = rect.top + rect.height / 2;
+                this.showMagnifier(x, y);
+            }, { passive: false });
+            
+            handle.addEventListener('touchmove', (e) => {
+                // 阻止触摸事件传播和默认行为
+                e.stopPropagation();
+                e.preventDefault();
+                
+                // 更新放大镜位置
+                const touch = e.touches[0];
+                this.updateMagnifier(this.cornerPositions[index].x, this.cornerPositions[index].y);
+            }, { passive: false });
+            
+            handle.addEventListener('touchend', (e) => {
+                // 隐藏放大镜
+                this.hideMagnifier();
+            }, { passive: false });
         });
     }
     
@@ -1045,15 +1108,166 @@ class ManualIDCardEditor {
     }
     
     /**
+     * 创建放大镜元素
+     */
+    createMagnifier() {
+        // 检查是否已存在放大镜
+        if (document.getElementById('corner-magnifier')) {
+            return;
+        }
+        
+        // 创建放大镜元素
+        const magnifier = document.createElement('div');
+        magnifier.id = 'corner-magnifier';
+        magnifier.className = 'corner-magnifier';
+        magnifier.style.display = 'none';
+        
+        // 创建放大镜内部元素
+        const magnifierInner = document.createElement('div');
+        magnifierInner.className = 'magnifier-inner';
+        magnifier.appendChild(magnifierInner);
+        
+        // 添加放大镜样式
+        const style = document.createElement('style');
+        style.textContent = `
+            .corner-magnifier {
+                position: absolute;
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                border: 2px solid rgba(35, 130, 226, 0.9);
+                background-color: white;
+                overflow: hidden;
+                z-index: 1000;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                pointer-events: none;
+                display: none;
+                transform: translate(-50%, -50%);
+            }
+            
+            .magnifier-inner {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background-repeat: no-repeat;
+                transform-origin: center;
+                transform: scale(2);
+            }
+            
+            @media (max-width: 768px) {
+                .corner-magnifier {
+                    width: 120px;
+                    height: 120px;
+                }
+                
+                .magnifier-inner {
+                    transform: scale(2.5);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 添加到文档
+        document.body.appendChild(magnifier);
+        
+        // 保存放大镜引用
+        this.magnifier = magnifier;
+        this.magnifierInner = magnifierInner;
+    }
+    
+    /**
+     * 显示放大镜
+     * @param {number} x - 放大镜中心 X 坐标
+     * @param {number} y - 放大镜中心 Y 坐标
+     */
+    showMagnifier(x, y) {
+        if (!this.magnifier) {
+            this.createMagnifier();
+        }
+        
+        // 设置放大镜位置
+        this.magnifier.style.left = `${x}px`;
+        this.magnifier.style.top = `${y}px`;
+        
+        // 更新放大镜内容
+        this.updateMagnifierContent(x, y);
+        
+        // 显示放大镜
+        this.magnifier.style.display = 'block';
+    }
+    
+    /**
+     * 更新放大镜位置和内容
+     * @param {number} x - 目标 X 坐标
+     * @param {number} y - 目标 Y 坐标
+     */
+    updateMagnifier(x, y) {
+        if (!this.magnifier || this.magnifier.style.display === 'none') {
+            return;
+        }
+        
+        // 获取图像容器的位置
+        const containerRect = this.imageElement.parentElement.getBoundingClientRect();
+        
+        // 计算放大镜在屏幕上的位置
+        const screenX = containerRect.left + x;
+        const screenY = containerRect.top + y;
+        
+        // 设置放大镜位置
+        this.magnifier.style.left = `${screenX}px`;
+        this.magnifier.style.top = `${screenY}px`;
+        
+        // 更新放大镜内容
+        this.updateMagnifierContent(screenX, screenY);
+    }
+    
+    /**
+     * 更新放大镜内容
+     * @param {number} x - 屏幕 X 坐标
+     * @param {number} y - 屏幕 Y 坐标
+     */
+    updateMagnifierContent(x, y) {
+        // 获取图像的位置和尺寸
+        const imgRect = this.imageElement.getBoundingClientRect();
+        
+        // 计算相对于图像的位置
+        const relX = x - imgRect.left;
+        const relY = y - imgRect.top;
+        
+        // 设置放大镜内部背景
+        this.magnifierInner.style.backgroundImage = `url(${this.imageElement.src})`;
+        this.magnifierInner.style.backgroundSize = `${imgRect.width * 2}px ${imgRect.height * 2}px`;
+        this.magnifierInner.style.backgroundPosition = `-${relX * 2 - 50}px -${relY * 2 - 50}px`;
+    }
+    
+    /**
+     * 隐藏放大镜
+     */
+    hideMagnifier() {
+        if (this.magnifier) {
+            this.magnifier.style.display = 'none';
+        }
+    }
+    
+    /**
      * 关闭编辑器
      */
     closeEditor() {
+        // 移除编辑器容器
         if (this.editorContainer && this.editorContainer.parentNode) {
             this.editorContainer.parentNode.removeChild(this.editorContainer);
         }
         
-        // 清除引用和状态
-        this.editorContainer = null;
+        // 移除放大镜
+        if (this.magnifier && this.magnifier.parentNode) {
+            this.magnifier.parentNode.removeChild(this.magnifier);
+            this.magnifier = null;
+            this.magnifierInner = null;
+        }
+        
+        // 重置状态
+        this.currentImage = null;
+        this.currentSide = null;
         this.imageElement = null;
         this.cornerHandles = [];
         this.cornerPositions = [];
