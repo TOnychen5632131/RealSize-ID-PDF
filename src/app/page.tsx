@@ -214,129 +214,131 @@ export default function Home() {
             <Navbar />
 
             <main className={styles.main}>
-                <div className={styles.hero}>
-                    <h1 style={{ fontSize: '4rem', marginBottom: '0' }}>RealSize ID PDF</h1>
-                </div>
+                <div className={styles.landingSection}>
+                    <div className={styles.hero}>
+                        <h1 style={{ fontSize: '4rem', marginBottom: '0' }}>RealSize ID PDF</h1>
+                    </div>
 
-                <div className={styles.contentCard}>
-                    {step === 'upload' && (
-                        <>
-                            {/* Document Type Switcher */}
-                            <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
-                                <SegmentedControl
-                                    options={[
-                                        { label: 'Standard ID Card', value: 'id' },
-                                        { label: 'Passport (ID-3)', value: 'passport' }
-                                    ]}
-                                    value={docType}
-                                    onChange={(v) => setDocType(v as any)}
-                                />
-                            </div>
-
-                            <div
-                                className={styles.uploadGrid}
-                                style={{ gridTemplateColumns: docType === 'passport' ? '1fr' : '1fr 1fr' }}
-                            >
-                                {/* Front Side */}
-                                <div className={styles.uploadItem}>
-                                    {/* h3 removed, label moved to prop */}
-                                    {frontFile ? (
-                                        <div>
-                                            <img
-                                                src={frontCropped || frontFile}
-                                                className={styles.previewImage}
-                                                onClick={() => setZoomedImage(frontCropped || frontFile)}
-                                                style={{ cursor: 'zoom-in' }}
-                                                alt="Front Preview"
-                                            />
-                                            <div className={styles.actionArea}>
-                                                <Button size="sm" variant="secondary" onClick={() => startCropping('front')}>Edit</Button>
-                                                <Button size="sm" variant="danger" onClick={() => { setFrontFile(null); setFrontCropped(null); }}>Remove</Button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <FileUpload
-                                            label={docType === 'passport' ? 'Passport Page' : 'Front Side'}
-                                            onFileSelect={(f) => handleFileSelect(f, 'front')}
-                                        />
-                                    )}
+                    <div className={styles.contentCard}>
+                        {step === 'upload' && (
+                            <>
+                                {/* Document Type Switcher */}
+                                <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
+                                    <SegmentedControl
+                                        options={[
+                                            { label: 'Standard ID Card', value: 'id' },
+                                            { label: 'Passport (ID-3)', value: 'passport' }
+                                        ]}
+                                        value={docType}
+                                        onChange={(v) => setDocType(v as any)}
+                                    />
                                 </div>
 
-                                {/* Back Side - Only for ID Cards */}
-                                {docType === 'id' && (
+                                <div
+                                    className={styles.uploadGrid}
+                                    style={{ gridTemplateColumns: docType === 'passport' ? '1fr' : '1fr 1fr' }}
+                                >
+                                    {/* Front Side */}
                                     <div className={styles.uploadItem}>
-                                        {/* h3 removed */}
-                                        {backFile ? (
+                                        {/* h3 removed, label moved to prop */}
+                                        {frontFile ? (
                                             <div>
                                                 <img
-                                                    src={backCropped || backFile}
+                                                    src={frontCropped || frontFile}
                                                     className={styles.previewImage}
-                                                    onClick={() => setZoomedImage(backCropped || backFile)}
+                                                    onClick={() => setZoomedImage(frontCropped || frontFile)}
                                                     style={{ cursor: 'zoom-in' }}
-                                                    alt="Back Preview"
+                                                    alt="Front Preview"
                                                 />
                                                 <div className={styles.actionArea}>
-                                                    <Button size="sm" variant="secondary" onClick={() => startCropping('back')}>Edit</Button>
-                                                    <Button size="sm" variant="danger" onClick={() => { setBackFile(null); setBackCropped(null); }}>Remove</Button>
+                                                    <Button size="sm" variant="secondary" onClick={() => startCropping('front')}>Edit</Button>
+                                                    <Button size="sm" variant="danger" onClick={() => { setFrontFile(null); setFrontCropped(null); }}>Remove</Button>
                                                 </div>
                                             </div>
                                         ) : (
                                             <FileUpload
-                                                label="Back Side"
-                                                onFileSelect={(f) => handleFileSelect(f, 'back')}
+                                                label={docType === 'passport' ? 'Passport Page' : 'Front Side'}
+                                                onFileSelect={(f) => handleFileSelect(f, 'front')}
                                             />
                                         )}
                                     </div>
-                                )}
-                            </div>
 
-                            {(frontFile || backFile) && (
-                                <div style={{ marginTop: '2rem' }}>
-                                    <Button onClick={() => setStep('preview')}>
-                                        Generate PDF Preview
-                                    </Button>
+                                    {/* Back Side - Only for ID Cards */}
+                                    {docType === 'id' && (
+                                        <div className={styles.uploadItem}>
+                                            {/* h3 removed */}
+                                            {backFile ? (
+                                                <div>
+                                                    <img
+                                                        src={backCropped || backFile}
+                                                        className={styles.previewImage}
+                                                        onClick={() => setZoomedImage(backCropped || backFile)}
+                                                        style={{ cursor: 'zoom-in' }}
+                                                        alt="Back Preview"
+                                                    />
+                                                    <div className={styles.actionArea}>
+                                                        <Button size="sm" variant="secondary" onClick={() => startCropping('back')}>Edit</Button>
+                                                        <Button size="sm" variant="danger" onClick={() => { setBackFile(null); setBackCropped(null); }}>Remove</Button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <FileUpload
+                                                    label="Back Side"
+                                                    onFileSelect={(f) => handleFileSelect(f, 'back')}
+                                                />
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                        </>
-                    )}
 
-                    {step === 'crop' && activeSide && (
-                        <div>
-                            <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Adjust {activeSide === 'front' ? 'Front' : 'Back'} Crop</h2>
-                            <div style={{ height: '400px', position: 'relative', marginBottom: '1rem' }}>
-                                <ImageCropper
-                                    imageSrc={(activeSide === 'front' ? frontFile : backFile) || ''}
-                                    /* Pass dynamic aspect ratio based on docType */
-                                    aspect={dims.aspect}
-                                    onCancel={() => { setStep('upload'); setActiveSide(null); }}
-                                    onConfirm={handleConfirmCrop}
-                                    onCropComplete={handleCropComplete}
-                                />
+                                {(frontFile || backFile) && (
+                                    <div style={{ marginTop: '2rem' }}>
+                                        <Button onClick={() => setStep('preview')}>
+                                            Generate PDF Preview
+                                        </Button>
+                                    </div>
+                                )}
+                            </>
+                        )}
+
+                        {step === 'crop' && activeSide && (
+                            <div>
+                                <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Adjust {activeSide === 'front' ? 'Front' : 'Back'} Crop</h2>
+                                <div style={{ height: '400px', position: 'relative', marginBottom: '1rem' }}>
+                                    <ImageCropper
+                                        imageSrc={(activeSide === 'front' ? frontFile : backFile) || ''}
+                                        /* Pass dynamic aspect ratio based on docType */
+                                        aspect={dims.aspect}
+                                        onCancel={() => { setStep('upload'); setActiveSide(null); }}
+                                        onConfirm={handleConfirmCrop}
+                                        onCropComplete={handleCropComplete}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {step === 'preview' && (
-                        <div className={styles.previewContainer}>
-                            <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Print Preview</h2>
-                            <PDFPreview frontImage={frontCropped || frontFile} backImage={backCropped || backFile} />
-                            <div className={styles.actionArea} style={{ marginTop: '2rem' }}>
-                                <Button variant="secondary" onClick={() => setStep('upload')}>Back to Edit</Button>
-                                <Button onClick={handleDownload}>Download PDF</Button>
+                        {step === 'preview' && (
+                            <div className={styles.previewContainer}>
+                                <h2 style={{ marginBottom: '1rem', textAlign: 'center' }}>Print Preview</h2>
+                                <PDFPreview frontImage={frontCropped || frontFile} backImage={backCropped || backFile} />
+                                <div className={styles.actionArea} style={{ marginTop: '2rem' }}>
+                                    <Button variant="secondary" onClick={() => setStep('upload')}>Back to Edit</Button>
+                                    <Button onClick={handleDownload}>Download PDF</Button>
+                                </div>
                             </div>
-                        </div>
-                    )}
-                </div>
+                        )}
+                    </div>
 
-                {/* Footer Text Moved per Request */}
-                <div className={styles.footerText}>
-                    <p>
-                        AI-calibrated ID card to A4 generator for <strong>85.6mm x 54mm</strong> badges and employee IDs.
-                    </p>
-                    <p style={{ marginTop: '0.5rem' }}>
-                        Upload the front and back, auto-detect edges with OpenCV, adjust manually
-                        if needed, and export a print-ready PDF with bleed and margins dialed in.
-                    </p>
+                    {/* Footer Text Moved per Request */}
+                    <div className={styles.footerText}>
+                        <p>
+                            AI-calibrated ID card to A4 generator for <strong>85.6mm x 54mm</strong> badges and employee IDs.
+                        </p>
+                        <p style={{ marginTop: '0.5rem' }}>
+                            Upload the front and back, auto-detect edges with OpenCV, adjust manually
+                            if needed, and export a print-ready PDF with bleed and margins dialed in.
+                        </p>
+                    </div>
                 </div>
 
                 <section className={styles.seoSection} aria-labelledby="realsize-benefits">

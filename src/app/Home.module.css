@@ -1,18 +1,19 @@
 /* Main Container */
 .main {
+    position: relative;
+    z-index: 1;
+    /* Removed flex centering for the whole page to split sections */
+}
+
+.landingSection {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    position: relative;
-    z-index: 1;
-    padding: 5.5rem 1rem 1rem 1rem;
-    /* Highly compacted top padding */
-    /* Compact top padding */
-    text-align: center;
-    /* Radial gradient for that "vignette" feel - Moved to global/body or made transparent so cards show */
-    background: transparent;
+    padding: 2rem 1rem;
+    /* Adjust padding as needed */
+    /* Ensure it takes full viewport */
 }
 
 .footerText {
