@@ -10,6 +10,7 @@ import { Button } from '@/components/Button';
 import { ImageModal } from '@/components/ImageModal';
 import { FloatingCards } from '@/components/FloatingCards';
 import { Navbar } from '@/components/Navbar';
+import { SegmentedControl } from '@/components/SegmentedControl';
 import { loadOpenCV, detectDocument, warpPerspective } from '@/utils/imageProcessing';
 import { generatePDF, toDataURL } from '@/utils/pdfGenerator';
 import { Area } from 'react-easy-crop';
@@ -20,6 +21,7 @@ type Side = 'front' | 'back';
 export default function Home() {
     // State
     const [step, setStep] = useState<Step>('upload');
+    const [docType, setDocType] = useState<'id' | 'passport'>('id');
     const [activeSide, setActiveSide] = useState<Side | null>(null);
 
     const [frontFile, setFrontFile] = useState<string | null>(null);
@@ -37,6 +39,16 @@ export default function Home() {
     const [cvLoaded, setCvLoaded] = useState(false);
 
     const cropPixelsRef = React.useRef<Area | null>(null);
+
+    // Derived Dims based on DocType
+    // ID-1: 85.6 x 54 mm (Aspect: 1.585)
+    // ID-3: 125 x 88 mm (Aspect: 1.42)
+    const getDocDims = () => {
+        if (docType === 'passport') return { width: 125, height: 88, aspect: 125 / 88 };
+        return { width: 85.6, height: 54, aspect: 85.6 / 54 };
+    };
+
+    const dims = getDocDims();
 
     // Initialize OpenCV
     useEffect(() => {
@@ -173,14 +185,16 @@ export default function Home() {
         try {
             const pdfBlob = await generatePDF({
                 frontImage: frontCropped,
-                backImage: backCropped
+                backImage: backCropped,
+                width: dims.width,
+                height: dims.height
             });
 
             // Download
             const url = URL.createObjectURL(pdfBlob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = "id-card-print.pdf";
+            link.download = `realsize-${docType}-print.pdf`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -201,17 +215,23 @@ export default function Home() {
 
             <main className={styles.main}>
                 <div className={styles.hero}>
-                    {/* Title Refined to match clean look */}
                     <h1 style={{ fontSize: '4rem', marginBottom: '0' }}>RealSize ID PDF</h1>
                 </div>
 
                 <div className={styles.contentCard}>
                     {step === 'upload' && (
                         <>
-                            {/* Mimic the "Which object...?" label */}
-                            <h3 style={{ textAlign: 'center', fontWeight: 500, fontSize: '1.1rem', marginBottom: '0.5rem' }}>
-                                Which ID card should I process?
-                            </h3>
+                            {/* Document Type Switcher */}
+                            <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
+                                <SegmentedControl
+                                    options={[
+                                        { label: 'Standard ID Card', value: 'id' },
+                                        { label: 'Passport (ID-3)', value: 'passport' }
+                                    ]}
+                                    value={docType}
+                                    onChange={(v) => setDocType(v as any)}
+                                />
+                            </div>
 
                             <div className={styles.uploadGrid}>
                                 {/* Front Side */}
@@ -239,6 +259,7 @@ export default function Home() {
                                 </div>
 
                                 {/* Back Side */}
+                                {/* For Passport, Back side is often optional, but we keep it for now */}
                                 <div className={styles.uploadItem}>
                                     <h3 className={styles.sideLabel}>Back Side</h3>
                                     {backFile ? (
@@ -279,6 +300,8 @@ export default function Home() {
                             <div style={{ height: '400px', position: 'relative', marginBottom: '1rem' }}>
                                 <ImageCropper
                                     imageSrc={(activeSide === 'front' ? frontFile : backFile) || ''}
+                                    /* Pass dynamic aspect ratio based on docType */
+                                    aspect={dims.aspect}
                                     onCancel={() => { setStep('upload'); setActiveSide(null); }}
                                     onConfirm={handleConfirmCrop}
                                     onCropComplete={handleCropComplete}

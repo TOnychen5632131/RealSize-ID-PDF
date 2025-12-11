@@ -5,7 +5,8 @@ import styles from './Cropper.module.css';
 
 interface ImageCropperProps {
     imageSrc: string;
-    initialCrop?: Point; // We might want rect actually, but react-easy-crop uses Point for pos
+    initialCrop?: Point;
+    aspect?: number; // Optional aspect ratio
     onCropComplete: (croppedArea: Area, croppedAreaPixels: Area) => void;
     onCancel: () => void;
     onConfirm: () => void;
@@ -13,14 +14,13 @@ interface ImageCropperProps {
 
 export const ImageCropper: React.FC<ImageCropperProps> = ({
     imageSrc,
+    aspect = 85.6 / 54, // Default to ID-1
     onCropComplete,
     onCancel,
     onConfirm
 }) => {
     const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
-    // Standard ID card ratio is 85.6mm / 54mm ≈ 1.585
-    const ASPECT_RATIO = 85.6 / 54;
 
     const onCropChange = (crop: Point) => {
         setCrop(crop);
@@ -37,7 +37,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({
                     image={imageSrc}
                     crop={crop}
                     zoom={zoom}
-                    aspect={ASPECT_RATIO}
+                    aspect={aspect}
                     onCropChange={onCropChange}
                     onCropComplete={onCropComplete}
                     onZoomChange={onZoomChange}

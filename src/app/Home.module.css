@@ -1,17 +1,16 @@
-/* Main Container z-index fix to sit ABOVE floating cards (max Z is 20) */
+/* Main Container */
 .main {
-    position: relative;
-    z-index: 30;
-    /* Higher than floating cards */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     min-height: 100vh;
-    padding: 6rem 1rem 2rem 1rem;
-    /* Pad for fixed navbar */
-    max-width: 1200px;
-    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+    text-align: center;
+    /* Radial gradient for that "vignette" feel - Moved to global/body or made transparent so cards show */
+    background: transparent;
 }
 
 .footerText {
@@ -119,12 +118,43 @@
 .uploadGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 2rem;
+    margin-top: 2rem;
 }
 
+/* Mobile Responsive Adjustments */
 @media (max-width: 600px) {
+    .main {
+        padding: 6rem 1rem 2rem 1rem;
+        /* Less top padding */
+    }
+
+    .hero h1 {
+        font-size: 2.5rem !important;
+        /* Smaller title */
+    }
+
+    .hero p {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
+
+    .contentCard {
+        padding: 1.5rem;
+        /* Tighter padding */
+        width: 100%;
+    }
+
     .uploadGrid {
         grid-template-columns: 1fr;
+        /* Stack vertically */
+        gap: 1.5rem;
+    }
+
+    .footerText {
+        padding: 1rem;
+        font-size: 0.85rem;
+        margin-top: 2rem;
     }
 }
 

@@ -18,37 +18,51 @@ const ASSETS = [
     '/assets/United-Kindom.webp',
     '/assets/id_french.png',
     '/assets/license.jpg',
-    '/assets/passport.jpg',
+    '/assets/Hong-Kong.webp',
     '/assets/passport_aus.jpg',
     '/assets/passport_swiss.jpg',
     '/assets/passport_uk.jpg'
 ];
 
-// Generate many cards for a dense, messy ring
-const cards = Array.from({ length: 64 }).map((_, i) => { // High density
-    // Distribute in a ring
-    const layer = i % 4;
-    const angle = (i / 64) * 360 + (Math.random() * 20 - 10);
+// Generate cards logic (keep standard config, can be outside or inside, but usage must be client-side)
+const generateCards = () => {
+    return Array.from({ length: 64 }).map((_, i) => {
+        const layer = i % 4;
+        const angle = (i / 64) * 360 + (Math.random() * 20 - 10);
+        const baseRadius = 50 + (layer * 12);
+        const radius = baseRadius + (Math.random() * 15 - 7.5);
 
-    return {
-        id: i,
-        angle,
-        // Store base percentage (50 is center edge, higher is wider)
-        // We will scale this in CSS or use baseRadius logical unit
-        baseRadiusPct: 50 + (layer * 12) + (Math.random() * 15 - 7.5),
-
-        rotate: Math.random() * 360,
-        delay: Math.random() * 4,
-        imageSrc: ASSETS[i % ASSETS.length],
-        scale: (0.6 + Math.random() * 0.4) * (1 - layer * 0.1),
-        blur: layer >= 2 ? '1.5px' : '0px',
-        zIndex: 20 - layer
-    };
-});
+        return {
+            id: i,
+            angle,
+            radius,
+            rotate: Math.random() * 360,
+            delay: Math.random() * 4,
+            imageSrc: ASSETS[i % ASSETS.length],
+            scale: (0.6 + Math.random() * 0.4) * (1 - layer * 0.1),
+            blur: layer >= 2 ? '1.5px' : '0px',
+            zIndex: 20 - layer
+        };
+    });
+};
 
 export const FloatingCards: React.FC = () => {
-    // We can use window width to adjust orbit scale if needed, or just CSS media queries on the container.
-    // Simpler: Use CSS variable for radius multiplier!
+    const [isMobile, setIsMobile] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const [cards, setCards] = useState<any[]>([]);
+
+    useEffect(() => {
+        setMounted(true);
+        setCards(generateCards()); // Generate random cards only on client
+
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Prevent hydration mismatch by defining initial render
+    if (!mounted) return <div className={styles.container} />;
 
     return (
         <div className={styles.container}>
@@ -63,23 +77,18 @@ export const FloatingCards: React.FC = () => {
                 className={styles.orbitContainer}
                 animate={{ rotate: 360 }}
                 transition={{
-                    duration: 120, // Slow rotation
+                    duration: 120,
                     repeat: Infinity,
                     ease: "linear"
                 }}
             >
                 {cards.map((card) => {
+                    const mobileRadiusModifier = isMobile ? 1.4 : 1.0;
+                    const effectiveRadius = card.radius * mobileRadiusModifier;
+
                     const rad = (card.angle * Math.PI) / 180;
-
-                    // Use CSS logic for responsive radius? Hard in inline styles.
-                    // Instead, we stick to %, but maybe ensure 50% means "edge of screen" 
-                    // which works well for both mobile (narrow) and desktop (wide).
-                    // Actually, on mobile 50% width is small. We might want larger radius on mobile.
-                    // But for now, let's trust the % based layout will scale down, keeping them 'surrounding'.
-                    // To ensure they don't cover center content on mobile, we can push them out further?
-
-                    const x = 50 + Math.cos(rad) * card.baseRadiusPct;
-                    const y = 50 + Math.sin(rad) * card.baseRadiusPct;
+                    const x = 50 + Math.cos(rad) * effectiveRadius;
+                    const y = 50 + Math.sin(rad) * effectiveRadius;
 
                     return (
                         <motion.div
@@ -89,7 +98,8 @@ export const FloatingCards: React.FC = () => {
                                 top: `${y}%`,
                                 left: `${x}%`,
                                 zIndex: card.zIndex,
-                                filter: `blur(${card.blur})`
+                                filter: `blur(${card.blur})`,
+                                transform: isMobile ? `scale(0.8)` : undefined
                             }}
                             initial={{
                                 scale: card.scale,
