@@ -1,16 +1,17 @@
-/* Main Container */
+/* Main Container z-index fix to sit ABOVE floating cards (max Z is 20) */
 .main {
+    position: relative;
+    z-index: 30;
+    /* Higher than floating cards */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 100vh;
-    position: relative;
-    z-index: 1;
-    padding: 2rem;
-    text-align: center;
-    /* Radial gradient for that "vignette" feel - Moved to global/body or made transparent so cards show */
-    background: transparent;
+    padding: 6rem 1rem 2rem 1rem;
+    /* Pad for fixed navbar */
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .footerText {

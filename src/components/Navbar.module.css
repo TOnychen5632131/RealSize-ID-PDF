@@ -6,13 +6,13 @@
     display: flex;
     justify-content: center;
     z-index: 1000;
-    /* Force on top */
     pointer-events: none;
+    padding: 0 16px;
+    /* Safety padding for small screens */
 }
 
 .navPill {
     pointer-events: auto;
-    /* Strong Glass Effect (High light mousse) */
     background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
@@ -20,15 +20,15 @@
     border-radius: 99px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    /* Better for mobile shrinking */
     gap: 24px;
-    /* Shiny border highlight + shadow */
     box-shadow:
         0 10px 30px -5px rgba(0, 0, 0, 0.1),
         0 4px 6px -2px rgba(0, 0, 0, 0.05),
         inset 0 0 0 1px rgba(255, 255, 255, 0.6),
-        /* Inner white ring */
         0 0 0 1px rgba(0, 0, 0, 0.05);
-    /* Outer subtle border */
+    max-width: 100%;
 }
 
 .logoSection {
@@ -36,6 +36,8 @@
     align-items: center;
     gap: 12px;
     padding-left: 8px;
+    flex-shrink: 0;
+    /* Keep logo visible */
 }
 
 .logoIcon {
@@ -78,6 +80,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 1;
+    /* Allow actions to shrink if needed? Or better to scroll. */
 }
 
 .signInBtn {
@@ -89,6 +93,7 @@
     cursor: pointer;
     padding: 8px 12px;
     transition: color 0.2s;
+    white-space: nowrap;
 }
 
 .signInBtn:hover {
@@ -106,9 +111,35 @@
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
     transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
 }
 
 .joinBtn:hover {
     transform: translateY(-1px);
     box-shadow: 0 8px 16px rgba(15, 23, 42, 0.3);
+}
+
+/* Mobile Tweaks */
+@media (max-width: 600px) {
+    .navPill {
+        gap: 12px;
+        padding: 6px 8px;
+        width: 100%;
+        /* Fill width with padding */
+    }
+
+    .brandName {
+        display: none;
+        /* Hide brand name on tiny screens if crowded, or just keep it */
+    }
+
+    .joinBtn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+
+    .signInBtn {
+        font-size: 0.85rem;
+        padding: 6px;
+    }
 }
