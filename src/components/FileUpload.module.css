@@ -1,52 +1,90 @@
-.uploadZone {
-    border: 2px dashed var(--color-text-muted);
-    border-radius: var(--radius-md);
-    padding: 2rem;
-    text-align: center;
-    transition: all var(--transition-fast);
-    background-color: rgba(255, 255, 255, 0.02);
-    cursor: pointer;
+/* The Outer Dashed Container */
+.container {
+    border: 2px dashed #cbd5e1;
+    /* Slightly darker dash */
+    border-radius: 24px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.3);
+    /* Subtle backdrop */
+    min-height: 220px;
+    /* Taller */
+    width: 100%;
     position: relative;
+    transition: all 0.3s ease;
 }
 
-.uploadZone:hover,
-.dragOver {
-    border-color: var(--color-primary);
-    background-color: rgba(var(--primary-h), var(--primary-s), var(--primary-l), 0.05);
-    /* Approximate, vars are HSL */
-    /* Since vars are HSL strings like "220, 90%, 56%", we can't easily use rgba directly with them unless we separated them. 
-     Current vars are: --color-primary: hsl(...) 
-     We can use --color-primary with opacity via color-mix if supported, or just simple opacity */
-    background-color: var(--color-surface);
-    /* Fallback */
-    box-shadow: var(--shadow-sm);
+.container:hover {
+    border-color: #94a3b8;
+    background: rgba(255, 255, 255, 0.5);
 }
 
-.hiddenInput {
-    display: none;
+.container.active {
+    border-color: #3b82f6;
+    background: rgba(239, 246, 255, 0.6);
 }
 
-.uploadLabel {
+/* The Inner "Button" Look - Metallic Silver per request */
+.innerButton {
+    width: 100px;
+    height: 100px;
+    /* Strong metallic gradient */
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%);
+    border-radius: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    color: white;
+    box-shadow:
+        0 20px 40px -10px rgba(0, 0, 0, 0.3),
+        /* Deep shadow */
+        0 10px 10px -5px rgba(0, 0, 0, 0.1),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6);
+    /* Highlights */
+    transition: transform 0.2s;
     cursor: pointer;
-    width: 100%;
-    height: 100%;
+}
+
+.container:hover .innerButton {
+    transform: scale(1.05) translateY(-2px);
 }
 
 .icon {
-    color: var(--color-primary);
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    margin-bottom: 0.2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.text {
+.label {
+    font-size: 0.85rem;
     font-weight: 600;
-    color: var(--color-text-main);
+    text-align: center;
+    padding: 0 10px;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.subtext {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
+/* Hidden elements */
+.cameraBtn {
+    position: absolute;
+    bottom: 20px;
+    padding: 8px 16px;
+    background: white;
+    color: #0f172a;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    border: 1px solid #e2e8f0;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s;
+}
+
+.cameraBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }

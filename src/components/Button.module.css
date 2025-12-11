@@ -1,0 +1,103 @@
+/* Base Styles */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    gap: 0.5rem;
+    font-family: inherit;
+}
+
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.fullWidth {
+    width: 100%;
+}
+
+/* Sizes */
+.sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+.md {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+.lg {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+}
+
+/* Variants */
+.primary {
+    background-color: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 14px 0 rgba(0, 112, 243, 0.39);
+}
+
+.primary:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-1px);
+}
+
+.secondary {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.secondary:hover:not(:disabled) {
+    border-color: var(--color-text);
+    background-color: #f9fafb;
+    /* Light hover */
+}
+
+/* Danger Variant */
+.danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    /* Red-500 with opacity */
+    color: #ef4444;
+    border-color: transparent;
+}
+
+.danger:hover:not(:disabled) {
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+    .secondary:hover:not(:disabled) {
+        background-color: #2a2a2a;
+    }
+}
+
+/* Loader */
+.loader {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+}
+
+.secondary .loader {
+    border-color: rgba(0, 0, 0, 0.1);
+    border-top-color: var(--color-text);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
