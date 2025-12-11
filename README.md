@@ -1,43 +1,36 @@
-# 在线身份证扫描工具 (Online ID Card Scanner)
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-这是一个简单易用的网页应用，可以帮助用户上传身份证图片并生成标准尺寸的 PDF 文档。
+## Getting Started
 
-## 功能特点
+First, run the development server:
 
-- **简单直观的界面**：无需登录，打开即可使用
-- **支持拖拽上传**：可以直接拖拽图片到上传区域
-- **支持点击上传**：点击上传区域可以打开文件选择器
-- **真实尺寸映射**：生成的 PDF 中身份证图像保持实际尺寸（85.6mm × 54mm）
-- **PDF 预览功能**：生成 PDF 前可以预览效果
-- **支持单面或双面**：可以只上传一面或同时上传两面
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## 使用方法
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-1. 打开应用网页
-2. 上传身份证正面和/或反面图片（至少上传一面）
-3. 点击"生成 PDF"按钮
-4. 在预览区查看生成的 PDF 效果
-5. 点击"下载 PDF"按钮保存文件到本地
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## 技术实现
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- 纯前端实现，无需后端服务
-- 使用 HTML5 的拖放 API 实现拖拽上传
-- 使用 jsPDF 库生成 PDF 文档
-- 响应式设计，适配不同设备屏幕
+## Learn More
 
-## 隐私说明
+To learn more about Next.js, take a look at the following resources:
 
-所有处理过程均在本地浏览器中完成，不会上传任何图片到服务器，保障用户隐私安全。
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## 浏览器兼容性
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-支持所有现代浏览器，包括：
-- Chrome
-- Firefox
-- Safari
-- Edge
+## Deploy on Vercel
 
-## 开始使用
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-直接打开`index.html`文件即可开始使用应用。
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
