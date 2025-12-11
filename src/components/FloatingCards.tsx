@@ -160,9 +160,7 @@ export const FloatingCards: React.FC = () => {
                     })}
                 </motion.div>
             )}
-
-            {/* Soft white vignette/halo at the edges */}
-            <div className={styles.halo} />
         </div>
     );
 };
+

@@ -93,21 +93,14 @@
 }
 
 .mainText {
-    color: #ffffff;
-    /* White text as seen in reference (or is it dark? Ref image 2: "Add your files" is White) */
-    /* Wait, checking reference again. 
-     The background is light silver. 
-     White text on light silver is bad contrast. 
-     Let me look at Figure 2 again. 
-     ... 
-     Actually, "Add your files" looks WHITE in the reference image (Figure 2). 
-     The gradient at the bottom is darker grey (#94a3b8 range), so white pops. 
-     The top is light. 
-     Let's try White with a subtle text shadow for readability. 
-  */
-    font-size: 1rem;
-    font-weight: 600;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    color: #64748b;
+    /* Darker text for visibility */
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: none;
+    /* Clean look */
 }
 
 .subText {

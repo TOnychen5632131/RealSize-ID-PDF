@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google"; // Use standard Inter font
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
+const googleTagId = "G-98W33LN7EY";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 const productName = "RealSize ID PDF";
 const productTitle = `${productName} | AI ID Card to A4 PDF Generator`;
 const productDescription =
-  "Create 85.6mm x 54mm ID cards that stay true to size on A4 sheets. Auto-crop with OpenCV, fine-tune manually, and export a print-ready PDF in seconds.";
+  "Create 85.6mm x 54mm ID cards that stay true to size on A4 sheets. Auto-crop with AI model, fine-tune manually, and export a print-ready PDF in seconds.";
 
 export const generateMetadata = (): Metadata => {
   const metadataBase = siteUrl ? new URL(siteUrl) : undefined;
@@ -103,6 +105,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${googleTagId}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${googleTagId}');
+          `}
+        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

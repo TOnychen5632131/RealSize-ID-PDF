@@ -239,7 +239,7 @@ export default function Home() {
                             >
                                 {/* Front Side */}
                                 <div className={styles.uploadItem}>
-                                    <h3 className={styles.sideLabel}>{docType === 'passport' ? 'Passport Page' : 'Front Side'}</h3>
+                                    {/* h3 removed, label moved to prop */}
                                     {frontFile ? (
                                         <div>
                                             <img
@@ -256,6 +256,7 @@ export default function Home() {
                                         </div>
                                     ) : (
                                         <FileUpload
+                                            label={docType === 'passport' ? 'Passport Page' : 'Front Side'}
                                             onFileSelect={(f) => handleFileSelect(f, 'front')}
                                         />
                                     )}
@@ -264,7 +265,7 @@ export default function Home() {
                                 {/* Back Side - Only for ID Cards */}
                                 {docType === 'id' && (
                                     <div className={styles.uploadItem}>
-                                        <h3 className={styles.sideLabel}>Back Side</h3>
+                                        {/* h3 removed */}
                                         {backFile ? (
                                             <div>
                                                 <img
@@ -281,6 +282,7 @@ export default function Home() {
                                             </div>
                                         ) : (
                                             <FileUpload
+                                                label="Back Side"
                                                 onFileSelect={(f) => handleFileSelect(f, 'back')}
                                             />
                                         )}
@@ -356,7 +358,7 @@ export default function Home() {
                         <article className={styles.seoCard}>
                             <h3>Computer vision clean-up</h3>
                             <p>
-                                OpenCV detects card corners, warps perspective, and keeps headshots centered.
+                                AI model detects card corners, warps perspective, and keeps headshots centered.
                                 Manual crop tools let you finalize edges before downloading the PDF.
                             </p>
                         </article>
@@ -369,29 +371,35 @@ export default function Home() {
                         </article>
                     </div>
                 </section>
-            </main>
+            </main >
 
             {/* Modals */}
-            {showCamera && (
-                <CameraCapture
-                    onCapture={handleCameraCapture}
-                    onClose={() => setShowCamera(false)}
-                />
-            )}
+            {
+                showCamera && (
+                    <CameraCapture
+                        onCapture={handleCameraCapture}
+                        onClose={() => setShowCamera(false)}
+                    />
+                )
+            }
 
-            {zoomedImage && (
-                <ImageModal
-                    src={zoomedImage}
-                    onClose={() => setZoomedImage(null)}
-                />
-            )}
+            {
+                zoomedImage && (
+                    <ImageModal
+                        src={zoomedImage}
+                        onClose={() => setZoomedImage(null)}
+                    />
+                )
+            }
 
-            {isProcessing && (
-                <div className={styles.loadingOverlay}>
-                    <div className={styles.spinner}></div>
-                    <p>Processing...</p>
-                </div>
-            )}
+            {
+                isProcessing && (
+                    <div className={styles.loadingOverlay}>
+                        <div className={styles.spinner}></div>
+                        <p>Processing...</p>
+                    </div>
+                )
+            }
         </>
     );
 }

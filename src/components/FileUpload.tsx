@@ -4,11 +4,13 @@ import styles from './FileUpload.module.css';
 interface FileUploadProps {
     onFileSelect: (file: File) => void;
     accept?: string;
+    label: string; // New required prop
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
     onFileSelect,
-    accept = "image/*"
+    accept = "image/*",
+    label
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,8 +44,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
                     </svg>
                 </div>
 
-                <span className={styles.mainText}>Add your files</span>
-                <span className={styles.subText}>Up to 20MB</span>
+                <span className={styles.mainText}>{label}</span>
+                {/* Removed subtext as requested */}
             </div>
         </div>
     );
