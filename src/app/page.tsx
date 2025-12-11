@@ -215,15 +215,14 @@ export default function Home() {
 
         {file ? (
           <>
-            <div className={styles.previewContainer3D}>
-              <img
-                src={cropped || file}
-                alt={`${side} preview`}
-                className={styles.previewImage}
-                onClick={() => setZoomedImage(cropped || file)}
-                title="Click to zoom"
-              />
-            </div>
+            <img
+              src={cropped || file}
+              alt={`${side} preview`}
+              className={styles.previewImage}
+              onClick={() => setZoomedImage(cropped || file)}
+              style={{ cursor: 'zoom-in' }}
+              title="Click to zoom"
+            />
             <div className={styles.actionArea}>
               <Button onClick={() => startCropping(side)} variant="secondary">
                 {cropped ? 'Edit Crop' : 'Crop & Process'}

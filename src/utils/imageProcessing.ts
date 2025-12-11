@@ -210,29 +210,11 @@ export const warpPerspective = async (imageSource: HTMLImageElement | HTMLCanvas
         const bl = bottom[0];
         const br = bottom[1];
 
-        // Expand the points slightly to avoid cutting off edges (add padding)
-        // Calculate centroid
-        const cx = (tl.x + tr.x + bl.x + br.x) / 4;
-        const cy = (tl.y + tr.y + bl.y + br.y) / 4;
-
-        // Expansion factor (e.g., 1.02 for 2% padding)
-        const scale = 1.025;
-
-        const expand = (p: { x: number, y: number }) => ({
-            x: cx + (p.x - cx) * scale,
-            y: cy + (p.y - cy) * scale
-        });
-
-        const tl_e = expand(tl);
-        const tr_e = expand(tr);
-        const br_e = expand(br);
-        const bl_e = expand(bl);
-
         const srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [
-            tl_e.x, tl_e.y,
-            tr_e.x, tr_e.y,
-            br_e.x, br_e.y,
-            bl_e.x, bl_e.y
+            tl.x, tl.y,
+            tr.x, tr.y,
+            br.x, br.y,
+            bl.x, bl.y
         ]);
 
         // Standard aspect ratio

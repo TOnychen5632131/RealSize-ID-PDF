@@ -70,34 +70,13 @@
     color: #166534;
 }
 
-.previewContainer3D {
-    perspective: 1000px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1rem;
-    padding: 1rem 0;
-}
-
 .previewImage {
     width: 100%;
     height: 200px;
     object-fit: contain;
-    background-color: transparent;
-    /* Remove gray bg for 3D feel */
+    background-color: #f9fafb;
     border-radius: var(--radius-md);
-    /* 3D Props */
-    transform: rotateY(-12deg) rotateX(6deg);
-    box-shadow: -10px 15px 30px rgba(0, 0, 0, 0.2);
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    cursor: zoom-in;
-}
-
-.previewImage:hover {
-    transform: rotateY(0deg) rotateX(0deg) scale(1.05);
-    /* Flatten and pop */
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-    z-index: 10;
+    margin-bottom: 1rem;
 }
 
 .actionArea {
