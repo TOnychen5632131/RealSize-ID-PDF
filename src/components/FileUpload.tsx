@@ -1,67 +1,50 @@
-import React, { useCallback, useState } from 'react';
+import React, { useRef } from 'react';
 import styles from './FileUpload.module.css';
 
 interface FileUploadProps {
     onFileSelect: (file: File) => void;
-    label?: string;
-    onCameraClick?: () => void;
     accept?: string;
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
     onFileSelect,
-    label,
-    onCameraClick,
     accept = "image/*"
 }) => {
-    const [isDragOver, setIsDragOver] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleDrop = useCallback((e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragOver(false);
-        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-            onFileSelect(e.dataTransfer.files[0]);
-        }
-    }, [onFileSelect]);
+    const handleClick = () => {
+        fileInputRef.current?.click();
+    };
 
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            onFileSelect(e.target.files[0]);
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            onFileSelect(file);
         }
-    }, [onFileSelect]);
+    };
 
     return (
-        <div
-            className={`${styles.container} ${isDragOver ? styles.active : ''}`}
-            onDrop={handleDrop}
-            onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
-            onDragLeave={() => setIsDragOver(false)}
-        >
+        <div className={styles.container} onClick={handleClick}>
             <input
                 type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
                 accept={accept}
-                onChange={handleChange}
-                style={{ display: 'none' }}
-                id={`file-upload-${label}`}
+                className={styles.hiddenInput}
             />
-            <label htmlFor={`file-upload-${label}`} style={{ cursor: 'pointer', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
 
-                {/* The Inner Gradient Button */}
-                <div className={styles.innerButton}>
-                    <div className={styles.icon}>+</div>
-                    <span className={styles.label}>{label || "Add Files"}</span>
+            <div className={styles.innerButton}>
+                {/* Icon: White Squircle with Plus */}
+                <div className={styles.iconWrapper}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 6V18" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M6 12H18" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" />
+                    </svg>
                 </div>
 
-                {onCameraClick && (
-                    <button
-                        type="button"
-                        className={styles.cameraBtn}
-                        onClick={(e) => { e.stopPropagation(); onCameraClick(); }}
-                    >
-                        📸 Camera
-                    </button>
-                )}
-            </label>
+                <span className={styles.mainText}>Add your files</span>
+                <span className={styles.subText}>Up to 20MB</span>
+            </div>
         </div>
     );
 };

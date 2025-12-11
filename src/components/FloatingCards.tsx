@@ -1,114 +1,118 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import styles from './FloatingCards.module.css';
 
-// Generate many cards for a dense ring
-const cards = Array.from({ length: 48 }).map((_, i) => {
-  // Distribute in a ring with some depth
-  const layer = i % 3; // 0=close, 1=mid, 2=far
-  const angle = (i / 48) * 360 + (Math.random() * 10 - 5); // Base angle + jitter
+// Asset Paths
+// Asset Paths
+const ASSETS = [
+    '/assets/Canada.webp',
+    '/assets/China.webp',
+    '/assets/Hong-Kong.webp',
+    '/assets/India.webp',
+    '/assets/Japan.webp',
+    '/assets/Korea.webp',
+    '/assets/New-Zealand.webp',
+    '/assets/Singapore.webp',
+    '/assets/Taiwan.webp',
+    '/assets/USA.webp',
+    '/assets/United-Kindom.webp',
+    '/assets/id_french.png',
+    '/assets/license.jpg',
+    '/assets/passport.jpg',
+    '/assets/passport_aus.jpg',
+    '/assets/passport_swiss.jpg',
+    '/assets/passport_uk.jpg'
+];
 
-  // Radius: INCREASED to ensure they "surround" the page content as requested
-  // Old: 35 + ...
-  const baseRadius = 45 + (layer * 15);
-  const radius = baseRadius + (Math.random() * 8 - 4);
+// Generate many cards for a dense, messy ring
+const cards = Array.from({ length: 64 }).map((_, i) => { // Increased count for density
+    // Distribute in a ring with MORE depth and messiness
+    const layer = i % 4; // 0..3 layers
+    const angle = (i / 64) * 360 + (Math.random() * 20 - 10); // More jitter in angle
 
-  return {
-    id: i,
-    angle,
-    radius,
-    // Random rotation
-    rotate: Math.random() * 180 - 90, // Chaotic rotation like dropped photos
-    delay: Math.random() * 4,
-    // Style class
-    style: `style${(i % 4) + 1}`,
-    // Scale factor for depth perception
-    scale: layer === 0 ? 1.1 : layer === 1 ? 0.9 : 0.7,
-    // Blur for depth
-    blur: layer === 2 ? '1px' : '0px',
-    zIndex: 10 - layer
-  };
+    // Radius: Spread them out more, but keep them surrounding the center
+    // Base radius 45% + layer variance + large random jitter
+    const baseRadius = 50 + (layer * 12);
+    const radius = baseRadius + (Math.random() * 15 - 7.5); // +/- 7.5% jitter
+
+    return {
+        id: i,
+        angle,
+        radius,
+        // Chaotic rotation: Full 360 random range for "messy dropped" look
+        rotate: Math.random() * 360,
+        delay: Math.random() * 4,
+        // Style class matches index in ASSETS
+        imageSrc: ASSETS[i % ASSETS.length],
+        // Scale factor: Smaller generally, with variance
+        scale: (0.6 + Math.random() * 0.4) * (1 - layer * 0.1), // 0.6 to 1.0 base, reduced by layer
+        // Blur for depth
+        blur: layer >= 2 ? '1.5px' : '0px',
+        zIndex: 20 - layer
+    };
 });
 
 export const FloatingCards: React.FC = () => {
-  return (
-    <div className={styles.container}>
-      {/* 
-         We animate the entire container to rotate slowly, creating the "orbit" effect 
-         without needing complex per-card math updates.
-      */}
-      <motion.div
-        className={styles.orbitContainer}
-        animate={{ rotate: 360 }}
-        transition={{
-          duration: 120, // Slow rotation (2 minutes per revolution)
-          repeat: Infinity,
-          ease: "linear"
-        }}
-      >
-        {cards.map((card) => {
-          // Calculate position
-          const rad = (card.angle * Math.PI) / 180;
-          const x = 50 + Math.cos(rad) * card.radius;
-          const y = 50 + Math.sin(rad) * card.radius;
+    return (
+        <div className={styles.container}>
+            {/* Ripple Background Effect */}
+            <div className={styles.rippleBackground}>
+                <div className={styles.rippleRing} style={{ animationDelay: '0s' }} />
+                <div className={styles.rippleRing} style={{ animationDelay: '2.5s' }} />
+                <div className={styles.rippleRing} style={{ animationDelay: '5s' }} />
+            </div>
 
-          return (
             <motion.div
-              key={card.id}
-              className={`${styles.card} ${styles[card.style]}`}
-              style={{
-                top: `${y}%`,
-                left: `${x}%`,
-                zIndex: card.zIndex,
-                filter: `blur(${card.blur})`
-              }}
-              // Instant appearance, no fade-in
-              initial={{
-                scale: card.scale,
-                rotate: card.rotate
-              }}
-              // Just local hover-like float, main movement is the container orbit
-              animate={{
-                rotate: card.rotate + (Math.random() * 10 - 5),
-                x: [0, Math.random() * 10 - 5, 0],
-                y: [0, Math.random() * 10 - 5, 0]
-              }}
-              transition={{
-                duration: 4 + Math.random() * 4,
-                repeat: Infinity,
-                repeatType: "reverse",
-                ease: "easeInOut"
-              }}
+                className={styles.orbitContainer}
+                animate={{ rotate: 360 }}
+                transition={{
+                    duration: 120, // Slow rotation
+                    repeat: Infinity,
+                    ease: "linear"
+                }}
             >
-              {/* Render different interiors based on style */}
-              {card.style === 'style1' ? (
-                // Passport Style
-                <div className={styles.cardInterior}>
-                  <div className={styles.header} />
-                  <div style={{ color: '#fbbf24', fontSize: '10px', fontWeight: 'bold', marginBottom: '4px' }}>PASSPORT</div>
-                  <div className={styles.textLine} />
-                  <div className={styles.textLine} style={{ width: '40%' }} />
-                </div>
-              ) : (
-                // ID/License Style
-                <div className={styles.cardInterior}>
-                  <div className={styles.header} />
-                  <div className={styles.body}>
-                    <div className={styles.portrait} />
-                    <div className={styles.details}>
-                      {/* Randomize chip presence */}
-                      {card.id % 2 === 0 && <div className={styles.chip} style={{ width: '20px', height: '14px', background: 'gold', borderRadius: '2px', marginBottom: '4px' }} />}
-                      <div className={styles.textLine} style={{ width: '90%' }} />
-                      <div className={styles.textLine} style={{ width: '60%' }} />
-                      <div className={styles.textLine} style={{ width: '80%' }} />
-                    </div>
-                  </div>
-                </div>
-              )}
+                {cards.map((card) => {
+                    const rad = (card.angle * Math.PI) / 180;
+                    const x = 50 + Math.cos(rad) * card.radius;
+                    const y = 50 + Math.sin(rad) * card.radius;
+
+                    return (
+                        <motion.div
+                            key={card.id}
+                            className={styles.card}
+                            style={{
+                                top: `${y}%`,
+                                left: `${x}%`,
+                                zIndex: card.zIndex,
+                                filter: `blur(${card.blur})`
+                            }}
+                            initial={{
+                                scale: card.scale,
+                                rotate: card.rotate
+                            }}
+                            animate={{
+                                // Local "float" on top of orbit
+                                rotate: card.rotate + (Math.random() * 20 - 10),
+                                x: [0, Math.random() * 15 - 7.5, 0],
+                                y: [0, Math.random() * 15 - 7.5, 0]
+                            }}
+                            transition={{
+                                duration: 5 + Math.random() * 5,
+                                repeat: Infinity,
+                                repeatType: "reverse",
+                                ease: "easeInOut"
+                            }}
+                        >
+                            <img
+                                src={card.imageSrc}
+                                alt=""
+                                className={styles.cardImage}
+                            />
+                            <div className={styles.gloss} />
+                        </motion.div>
+                    );
+                })}
             </motion.div>
-          );
-        })}
-      </motion.div>
-    </div>
-  );
+        </div>
+    );
 };

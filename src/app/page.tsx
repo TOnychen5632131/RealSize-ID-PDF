@@ -216,6 +216,7 @@ export default function Home() {
                             <div className={styles.uploadGrid}>
                                 {/* Front Side */}
                                 <div className={styles.uploadItem}>
+                                    <h3 className={styles.sideLabel}>Front Side</h3>
                                     {frontFile ? (
                                         <div>
                                             <img
@@ -233,14 +234,13 @@ export default function Home() {
                                     ) : (
                                         <FileUpload
                                             onFileSelect={(f) => handleFileSelect(f, 'front')}
-                                            label="Front Side"
-                                            onCameraClick={() => { setCameraSide('front'); setShowCamera(true); }}
                                         />
                                     )}
                                 </div>
 
                                 {/* Back Side */}
                                 <div className={styles.uploadItem}>
+                                    <h3 className={styles.sideLabel}>Back Side</h3>
                                     {backFile ? (
                                         <div>
                                             <img
@@ -258,8 +258,6 @@ export default function Home() {
                                     ) : (
                                         <FileUpload
                                             onFileSelect={(f) => handleFileSelect(f, 'back')}
-                                            label="Back Side"
-                                            onCameraClick={() => { setCameraSide('back'); setShowCamera(true); }}
                                         />
                                     )}
                                 </div>
