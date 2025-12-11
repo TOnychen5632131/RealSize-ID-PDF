@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import styles from './Home.module.css';
 import { FileUpload } from '@/components/FileUpload';
 import { CameraCapture } from '@/components/CameraCapture';
@@ -341,7 +342,14 @@ export default function Home() {
                     </div>
                 </div>
 
-                <section className={styles.seoSection} aria-labelledby="realsize-benefits">
+                <motion.section
+                    className={styles.seoSection}
+                    aria-labelledby="realsize-benefits"
+                    initial={{ opacity: 0, y: 100 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ type: "spring", stiffness: 50, damping: 20 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                >
                     <div className={styles.seoHeader}>
                         <h2 id="realsize-benefits">Why RealSize prints IDs that fit every card holder</h2>
                         <p>
@@ -372,7 +380,7 @@ export default function Home() {
                             </p>
                         </article>
                     </div>
-                </section>
+                </motion.section>
             </main >
 
             {/* Modals */}
