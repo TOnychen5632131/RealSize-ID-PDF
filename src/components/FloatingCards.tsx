@@ -5,20 +5,23 @@ import styles from './FloatingCards.module.css';
 // Asset Paths
 // Asset Paths
 const ASSETS = [
+    '/assets/Australia.webp',
     '/assets/Canada.webp',
     '/assets/China.webp',
+    '/assets/Germany.webp',
     '/assets/Hong-Kong.webp',
     '/assets/India.webp',
     '/assets/Japan.webp',
     '/assets/Korea.webp',
+    '/assets/Macao.webp',
     '/assets/New-Zealand.webp',
     '/assets/Singapore.webp',
+    '/assets/Spain.webp',
     '/assets/Taiwan.webp',
     '/assets/USA.webp',
     '/assets/United-Kindom.webp',
     '/assets/id_french.png',
     '/assets/license.jpg',
-    '/assets/Hong-Kong.webp',
     '/assets/passport_aus.jpg',
     '/assets/passport_swiss.jpg',
     '/assets/passport_uk.jpg'
@@ -61,73 +64,105 @@ export const FloatingCards: React.FC = () => {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    // Prevent hydration mismatch by defining initial render
+    // Mobile Marquee Logic
+    // create 3 columns, each with a duplicated long list of assets for smooth infinite scroll
+    const marqueeColumns = [
+        [...ASSETS, ...ASSETS, ...ASSETS], // Column 1
+        [...ASSETS, ...ASSETS, ...ASSETS].reverse(), // Column 2 (reverse for variety)
+        [...ASSETS, ...ASSETS, ...ASSETS]  // Column 3
+    ];
+
     if (!mounted) return <div className={styles.container} />;
 
     return (
         <div className={styles.container}>
-            {/* Ripple Background Effect */}
+            {/* Ripple Background Effect - Always present */}
             <div className={styles.rippleBackground}>
                 <div className={styles.rippleRing} style={{ animationDelay: '0s' }} />
                 <div className={styles.rippleRing} style={{ animationDelay: '2.5s' }} />
                 <div className={styles.rippleRing} style={{ animationDelay: '5s' }} />
             </div>
 
-            <motion.div
-                className={styles.orbitContainer}
-                animate={{ rotate: 360 }}
-                transition={{
-                    duration: 120,
-                    repeat: Infinity,
-                    ease: "linear"
-                }}
-            >
-                {cards.map((card) => {
-                    const mobileRadiusModifier = isMobile ? 1.4 : 1.0;
-                    const effectiveRadius = card.radius * mobileRadiusModifier;
+            {isMobile ? (
+                // --- Mobile Marquee View ---
+                <div className={styles.marqueeContainer}>
+                    {marqueeColumns.map((colAssets, colIndex) => (
+                        <div key={colIndex} className={styles.marqueeColumn}>
+                            <motion.div
+                                className={styles.marqueeTrack}
+                                animate={{ y: colIndex % 2 === 0 ? [0, -1000] : [-1000, 0] }}
+                                transition={{
+                                    duration: 40 + colIndex * 10,
+                                    repeat: Infinity,
+                                    ease: "linear"
+                                }}
+                            >
+                                {colAssets.map((src, idx) => (
+                                    <div key={idx} className={styles.marqueeCard}>
+                                        <img src={src} alt="" />
+                                    </div>
+                                ))}
+                            </motion.div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                // --- Desktop Orbit View ---
+                <motion.div
+                    className={styles.orbitContainer}
+                    animate={{ rotate: 360 }}
+                    transition={{
+                        duration: 120, // Slow rotation
+                        repeat: Infinity,
+                        ease: "linear"
+                    }}
+                >
+                    {cards.map((card) => {
+                        // Desktop only needs checking here strictly speaking, but keeping logic clean
+                        const rad = (card.angle * Math.PI) / 180;
+                        const x = 50 + Math.cos(rad) * card.radius;
+                        const y = 50 + Math.sin(rad) * card.radius;
 
-                    const rad = (card.angle * Math.PI) / 180;
-                    const x = 50 + Math.cos(rad) * effectiveRadius;
-                    const y = 50 + Math.sin(rad) * effectiveRadius;
+                        return (
+                            <motion.div
+                                key={card.id}
+                                className={styles.card}
+                                style={{
+                                    top: `${y}%`,
+                                    left: `${x}%`,
+                                    zIndex: card.zIndex,
+                                    filter: `blur(${card.blur})`
+                                }}
+                                initial={{
+                                    scale: card.scale,
+                                    rotate: card.rotate
+                                }}
+                                animate={{
+                                    rotate: card.rotate + (Math.random() * 20 - 10),
+                                    x: [0, Math.random() * 15 - 7.5, 0],
+                                    y: [0, Math.random() * 15 - 7.5, 0]
+                                }}
+                                transition={{
+                                    duration: 5 + Math.random() * 5,
+                                    repeat: Infinity,
+                                    repeatType: "reverse",
+                                    ease: "easeInOut"
+                                }}
+                            >
+                                <img
+                                    src={card.imageSrc}
+                                    alt=""
+                                    className={styles.cardImage}
+                                />
+                                <div className={styles.gloss} />
+                            </motion.div>
+                        );
+                    })}
+                </motion.div>
+            )}
 
-                    return (
-                        <motion.div
-                            key={card.id}
-                            className={styles.card}
-                            style={{
-                                top: `${y}%`,
-                                left: `${x}%`,
-                                zIndex: card.zIndex,
-                                filter: `blur(${card.blur})`,
-                                transform: isMobile ? `scale(0.8)` : undefined
-                            }}
-                            initial={{
-                                scale: card.scale,
-                                rotate: card.rotate
-                            }}
-                            animate={{
-                                // Local "float" on top of orbit
-                                rotate: card.rotate + (Math.random() * 20 - 10),
-                                x: [0, Math.random() * 15 - 7.5, 0],
-                                y: [0, Math.random() * 15 - 7.5, 0]
-                            }}
-                            transition={{
-                                duration: 5 + Math.random() * 5,
-                                repeat: Infinity,
-                                repeatType: "reverse",
-                                ease: "easeInOut"
-                            }}
-                        >
-                            <img
-                                src={card.imageSrc}
-                                alt=""
-                                className={styles.cardImage}
-                            />
-                            <div className={styles.gloss} />
-                        </motion.div>
-                    );
-                })}
-            </motion.div>
+            {/* Soft white vignette/halo at the edges */}
+            <div className={styles.halo} />
         </div>
     );
 };

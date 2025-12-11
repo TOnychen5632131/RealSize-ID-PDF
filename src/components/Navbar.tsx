@@ -18,7 +18,7 @@ export const Navbar: React.FC = () => {
 
                 {/* Right Actions */}
                 <div className={styles.actions}>
-                    <button className={styles.signInBtn}>Sign In</button>
+                    <button className={styles.signInBtn}>API Docs</button>
                     <button className={styles.joinBtn}>Join Waitlist</button>
                 </div>
             </div>

@@ -7,22 +7,27 @@
     min-height: 100vh;
     position: relative;
     z-index: 1;
-    padding: 2rem;
+    padding: 5.5rem 1rem 1rem 1rem;
+    /* Highly compacted top padding */
+    /* Compact top padding */
     text-align: center;
     /* Radial gradient for that "vignette" feel - Moved to global/body or made transparent so cards show */
     background: transparent;
 }
 
 .footerText {
-    margin-top: 4rem;
+    margin-top: 1rem;
+    /* Reduced from 2rem */
     max-width: 600px;
     color: var(--color-text-muted);
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 0.8rem;
+    /* Smaller font */
+    line-height: 1.4;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     background: rgba(255, 255, 255, 0.7);
-    padding: 1.5rem;
+    padding: 0.75rem;
+    /* Smaller padding */
     border-radius: var(--radius-md);
     backdrop-filter: blur(8px);
 }
@@ -37,18 +42,21 @@
 
 /* Title - Crisp Black */
 .hero h1 {
-    font-size: 5rem;
+    font-size: 3rem;
+    /* Reduced from 3.5rem */
+    /* Reduced from 5rem/4rem */
     /* Larger */
     font-weight: 800;
     /* Bolder */
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.2rem;
     color: #000;
     letter-spacing: -0.04em;
-    line-height: title;
+    line-height: 1.1;
 }
 
 .hero p {
-    font-size: 1.25rem;
+    font-size: 1rem;
+    /* Reduced from 1.1rem */
     color: var(--color-text-muted);
     font-weight: 400;
     display: inline-flex;
@@ -58,10 +66,12 @@
 }
 
 .heroSubtext {
-    margin-top: 0.75rem;
+    margin-top: 0.4rem;
     max-width: 720px;
-    line-height: 1.6;
+    line-height: 1.4;
     color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+    /* Added explicit bottom margin to control space before card */
 }
 
 /* "Badge" style for the highlighted word */
@@ -71,7 +81,7 @@
     border-radius: 99px;
     font-weight: 600;
     color: #000;
-    font-size: 1rem;
+    font-size: 0.9rem;
     vertical-align: middle;
     border: 1px solid #e2e8f0;
 }
@@ -82,15 +92,19 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 30px;
+    border-radius: 20px;
+    /* Slightly less rounded to save space visually? No, keep it modern but maybe smaller radius if needed */
     /* More rounded like reference */
-    padding: 2.5rem;
+    padding: 1.5rem;
+    /* Reduced from 2rem */
     width: 100%;
     max-width: 500px;
     /* Narrower focus */
+    margin: 0 auto;
     box-shadow:
-        0 10px 40px -10px rgba(0, 0, 0, 0.05),
-        0 0 0 1px rgba(0, 0, 0, 0.02);
+        0 20px 40px -5px rgba(0, 0, 0, 0.05),
+        /* Soft drop */
+        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
     /* Subtle outline */
     display: flex;
     flex-direction: column;

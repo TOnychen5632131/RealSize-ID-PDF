@@ -233,10 +233,13 @@ export default function Home() {
                                 />
                             </div>
 
-                            <div className={styles.uploadGrid}>
+                            <div
+                                className={styles.uploadGrid}
+                                style={{ gridTemplateColumns: docType === 'passport' ? '1fr' : '1fr 1fr' }}
+                            >
                                 {/* Front Side */}
                                 <div className={styles.uploadItem}>
-                                    <h3 className={styles.sideLabel}>Front Side</h3>
+                                    <h3 className={styles.sideLabel}>{docType === 'passport' ? 'Passport Page' : 'Front Side'}</h3>
                                     {frontFile ? (
                                         <div>
                                             <img
@@ -258,30 +261,31 @@ export default function Home() {
                                     )}
                                 </div>
 
-                                {/* Back Side */}
-                                {/* For Passport, Back side is often optional, but we keep it for now */}
-                                <div className={styles.uploadItem}>
-                                    <h3 className={styles.sideLabel}>Back Side</h3>
-                                    {backFile ? (
-                                        <div>
-                                            <img
-                                                src={backCropped || backFile}
-                                                className={styles.previewImage}
-                                                onClick={() => setZoomedImage(backCropped || backFile)}
-                                                style={{ cursor: 'zoom-in' }}
-                                                alt="Back Preview"
-                                            />
-                                            <div className={styles.actionArea}>
-                                                <Button size="sm" variant="secondary" onClick={() => startCropping('back')}>Edit</Button>
-                                                <Button size="sm" variant="danger" onClick={() => { setBackFile(null); setBackCropped(null); }}>Remove</Button>
+                                {/* Back Side - Only for ID Cards */}
+                                {docType === 'id' && (
+                                    <div className={styles.uploadItem}>
+                                        <h3 className={styles.sideLabel}>Back Side</h3>
+                                        {backFile ? (
+                                            <div>
+                                                <img
+                                                    src={backCropped || backFile}
+                                                    className={styles.previewImage}
+                                                    onClick={() => setZoomedImage(backCropped || backFile)}
+                                                    style={{ cursor: 'zoom-in' }}
+                                                    alt="Back Preview"
+                                                />
+                                                <div className={styles.actionArea}>
+                                                    <Button size="sm" variant="secondary" onClick={() => startCropping('back')}>Edit</Button>
+                                                    <Button size="sm" variant="danger" onClick={() => { setBackFile(null); setBackCropped(null); }}>Remove</Button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ) : (
-                                        <FileUpload
-                                            onFileSelect={(f) => handleFileSelect(f, 'back')}
-                                        />
-                                    )}
-                                </div>
+                                        ) : (
+                                            <FileUpload
+                                                onFileSelect={(f) => handleFileSelect(f, 'back')}
+                                            />
+                                        )}
+                                    </div>
+                                )}
                             </div>
 
                             {(frontFile || backFile) && (

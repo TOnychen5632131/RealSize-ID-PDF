@@ -96,3 +96,73 @@
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 60%);
     pointer-events: none;
 }
+
+/* --- Mobile Marquee Styles --- */
+.marqueeContainer {
+    position: absolute;
+    top: -20%;
+    left: -50%;
+    width: 200%;
+    height: 140%;
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: center;
+    /* Rotate the entire wall */
+    transform: rotate(-15deg);
+    opacity: 0.6;
+    /* Subdued background */
+}
+
+.marqueeColumn {
+    display: flex;
+    flex-direction: column;
+    /* Each column has a track inside */
+    width: 120px;
+    /* Fixed width for consistent columns */
+    overflow: hidden;
+    /* Hide overflow if needed, but we scroll the track */
+}
+
+.marqueeTrack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    /* Will be animated via framer-motion y */
+}
+
+.marqueeCard {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: #fff;
+}
+
+.marqueeCard img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Subtle Halo / Vignette to focus center */
+.halo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+    /* Above cards (z-index ~1-4 depending on layer, orbit is z-index auto) */
+    /* 
+       Radial Gradient:
+       Center: Transparent (shows cards clearly)
+       Edges: White fading in (softens the cards at the corners/edges)
+    */
+    background: radial-gradient(circle at 50% 50%,
+            rgba(255, 255, 255, 0) 40%,
+            rgba(255, 255, 255, 0.4) 60%,
+            rgba(255, 255, 255, 0.95) 100%);
+}

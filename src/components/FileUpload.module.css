@@ -22,10 +22,27 @@
 
 @media (max-width: 600px) {
     .container {
-        max-width: 160px;
-        /* Smaller on mobile */
-        max-height: 160px;
-        border-radius: 20px;
+        max-width: 120px;
+        /* Aggressively reduced from 160px */
+        max-height: 120px;
+        border-radius: 16px;
+        padding: 8px;
+    }
+
+    /* Inner tweaks for small size */
+    .iconWrapper {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 4px;
+        border-radius: 8px;
+    }
+
+    .mainText {
+        font-size: 0.75rem;
+    }
+
+    .subText {
+        font-size: 0.65rem;
     }
 }
 
