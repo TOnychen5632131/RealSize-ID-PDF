@@ -80,3 +80,13 @@
     font-size: 0.875rem;
     color: var(--color-text-muted);
 }
+
+.scanLine {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+}
