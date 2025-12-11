@@ -4,13 +4,15 @@ import styles from './FileUpload.module.css';
 interface FileUploadProps {
     onFileSelect: (file: File) => void;
     accept?: string;
-    label: string; // New required prop
+    label: string;
+    variant?: 'front' | 'back' | 'passport';
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({
     onFileSelect,
     accept = "image/*",
-    label
+    label,
+    variant = 'front'
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,16 +38,44 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             />
 
             <div className={styles.innerButton}>
-                {/* Icon: White Squircle with Plus */}
-                <div className={styles.iconWrapper}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 6V18" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" />
-                        <path d="M6 12H18" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" />
-                    </svg>
+                {/* Decorative Elements */}
+                <div className={styles.headerDeco} />
+
+                {variant === 'back' && <div className={styles.chip} />}
+
+                {/* Skeleton Layout */}
+                {variant === 'back' ? (
+                    <div className={`${styles.skeletonLayout} ${styles.backLayout}`}>
+                        <div className={styles.fullWidthLines}>
+                            <div className={`${styles.line} ${styles.medium}`} />
+                            <div className={`${styles.line} ${styles.long}`} />
+                            <div className={`${styles.line} ${styles.long}`} />
+                            <div className={`${styles.line} ${styles.short}`} />
+                        </div>
+                    </div>
+                ) : (
+                    <div className={styles.skeletonLayout}>
+                        {/* Front / Passport Layout: Photo Left */}
+                        <div className={styles.photoPlaceholder} />
+                        <div className={styles.infoColumn}>
+                            <div className={`${styles.line} ${styles.short}`} />
+                            <div className={`${styles.line} ${styles.long}`} />
+                            <div className={`${styles.line} ${styles.medium}`} />
+                            <div className={`${styles.line} ${styles.long}`} />
+                        </div>
+                    </div>
+                )}
+
+                {/* MRZ Strip at Bottom for all */}
+                <div className={styles.mrzStrip}>
+                    <div className={styles.mrzLine} />
+                    <div className={styles.mrzLine} />
                 </div>
 
-                <span className={styles.mainText}>{label}</span>
-                {/* Removed subtext as requested */}
+                {/* Floating Centered Label */}
+                <div className={styles.overlayLabel}>
+                    + {label}
+                </div>
             </div>
         </div>
     );

@@ -260,6 +260,7 @@ export default function Home() {
                                             <FileUpload
                                                 label={docType === 'passport' ? 'Passport Page' : 'Front Side'}
                                                 onFileSelect={(f) => handleFileSelect(f, 'front')}
+                                                variant={docType === 'passport' ? 'passport' : 'front'}
                                             />
                                         )}
                                     </div>
@@ -286,6 +287,7 @@ export default function Home() {
                                                 <FileUpload
                                                     label="Back Side"
                                                     onFileSelect={(f) => handleFileSelect(f, 'back')}
+                                                    variant="back"
                                                 />
                                             )}
                                         </div>
