@@ -87,30 +87,23 @@
 }
 
 /* Central Card - Clean White Glass */
+/* Central Card - Transparent Layout per user request */
 .contentCard {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 20px;
-    /* Slightly less rounded to save space visually? No, keep it modern but maybe smaller radius if needed */
-    /* More rounded like reference */
-    padding: 1.5rem;
-    /* Reduced from 2rem */
+    background: transparent;
+    border: none;
+    /* No border */
+    box-shadow: none;
+    /* No shadow */
+    border-radius: 24px;
+    padding: 0;
+    /* Reduced padding since no container visual */
     width: 100%;
-    max-width: 500px;
-    /* Narrower focus */
+    max-width: 600px;
     margin: 0 auto;
-    box-shadow:
-        0 20px 40px -5px rgba(0, 0, 0, 0.05),
-        /* Soft drop */
-        0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-    /* Subtle outline */
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    margin-top: 3rem;
-    transition: transform 0.3s ease;
+    gap: 1rem;
+    margin-top: 2rem;
 }
 
 .contentCard:hover {
@@ -249,14 +242,32 @@
     gap: 1.5rem;
 }
 
+.seoHeader {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+        0 10px 30px -5px rgba(0, 0, 0, 0.05),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    border-radius: 24px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
 .seoHeader h2 {
     font-size: 1.75rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    color: #1e293b;
 }
 
 .seoHeader p {
-    color: var(--color-text-muted);
+    color: #475569;
     line-height: 1.6;
+    font-size: 1.05rem;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .seoGrid {
