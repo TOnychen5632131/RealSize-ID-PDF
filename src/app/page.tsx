@@ -383,6 +383,10 @@ export default function Home() {
                         </article>
                     </div>
                 </motion.section>
+
+                <footer className={styles.pageFooter}>
+                    <p>Powered by Wendell</p>
+                </footer>
             </main >
 
             {/* Modals */}
