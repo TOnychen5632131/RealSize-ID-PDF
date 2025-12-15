@@ -249,7 +249,7 @@ export default function Home() {
                                                     className={styles.previewImage}
                                                     onClick={() => setZoomedImage(frontCropped || frontFile)}
                                                     style={{ cursor: 'zoom-in' }}
-                                                    alt="Front Preview"
+                                                    alt="Preview of uploaded front side ID card or document"
                                                 />
                                                 <div className={styles.actionArea}>
                                                     <Button size="sm" variant="secondary" onClick={() => startCropping('front')}>Edit</Button>
@@ -276,7 +276,7 @@ export default function Home() {
                                                         className={styles.previewImage}
                                                         onClick={() => setZoomedImage(backCropped || backFile)}
                                                         style={{ cursor: 'zoom-in' }}
-                                                        alt="Back Preview"
+                                                        alt="Preview of uploaded back side ID card"
                                                     />
                                                     <div className={styles.actionArea}>
                                                         <Button size="sm" variant="secondary" onClick={() => startCropping('back')}>Edit</Button>
@@ -338,8 +338,9 @@ export default function Home() {
                             AI-calibrated ID card to A4 generator for <strong>85.6mm x 54mm</strong> badges and employee IDs.
                         </p>
                         <p style={{ marginTop: '0.5rem' }}>
-                            Upload the front and back, auto-detect edges with OpenCV, adjust manually
+                            Upload the front and back, auto-detect edges with smart AI, adjust manually
                             if needed, and export a print-ready PDF with bleed and margins dialed in.
+                            <strong>100% private: images never leave your device.</strong>
                         </p>
                     </div>
                 </div>
@@ -361,6 +362,12 @@ export default function Home() {
                     </div>
                     <div className={styles.seoGrid}>
                         <article className={styles.seoCard}>
+                            <h3>100% Private & Secure</h3>
+                            <p>
+                                Your data never leaves your device. All image processing—cropping, resizing, and PDF generation—happens locally in your browser. No servers, no uploads, no risk.
+                            </p>
+                        </article>
+                        <article className={styles.seoCard}>
                             <h3>True-to-scale layout</h3>
                             <p>
                                 Generates 85.6mm x 54mm ID cards on A4 with guides that respect printer-safe margins,
@@ -368,7 +375,7 @@ export default function Home() {
                             </p>
                         </article>
                         <article className={styles.seoCard}>
-                            <h3>Computer vision clean-up</h3>
+                            <h3>Smart detection clean-up</h3>
                             <p>
                                 AI model detects card corners, warps perspective, and keeps headshots centered.
                                 Manual crop tools let you finalize edges before downloading the PDF.

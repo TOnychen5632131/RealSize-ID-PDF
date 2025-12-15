@@ -10,7 +10,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 const productName = "RealSize ID PDF";
 const productTitle = `${productName} | AI ID Card to A4 PDF Generator`;
 const productDescription =
-  "Create 85.6mm x 54mm ID cards that stay true to size on A4 sheets. Auto-crop with AI model, fine-tune manually, and export a print-ready PDF in seconds.";
+  "Create 85.6mm x 54mm ID cards that stay true to size on A4 sheets. Auto-crop with AI model, fine-tune manually, and export a print-ready PDF in seconds. 100% client-side processing ensuring your data never leaves your device.";
 
 export const generateMetadata = (): Metadata => {
   const metadataBase = siteUrl ? new URL(siteUrl) : undefined;
@@ -25,7 +25,7 @@ export const generateMetadata = (): Metadata => {
       "85.6mm x 54mm ID card",
       "badge printing template",
       "ID photo cropper",
-      "OpenCV document detection",
+      "Client-side ID processing",
       "A4 layout generator",
       "MockAI RealSize",
     ],
@@ -96,8 +96,9 @@ export default function RootLayout({
     description: productDescription,
     featureList: [
       "Real-size 85.6mm x 54mm ID card layout on A4",
-      "Auto-crop with corner detection, manual fine-tuning",
+      "Auto-crop with smart detection, manual fine-tuning",
       "Dual-side uploads for front and back badges",
+      "100% Client-side processing - no server uploads",
       "Instant PDF download for office and pro printers",
     ],
   };
